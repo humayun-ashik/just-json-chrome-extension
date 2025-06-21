@@ -45,6 +45,11 @@ We don’t use cookies, analytics, or external APIs.
 👉 [Privacy Policy](https://humayun-ashik.github.io/just-json-chrome-extension/privacy.html)
 
 ---
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
 
 ## 🛠️ Development
 
@@ -54,10 +59,6 @@ Want to contribute?
 git clone https://github.com/humayun-ashik/just-json-chrome-extension.git
 cd just-json-chrome-extension
 # make your changes
-
-
 ...
 
-## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
