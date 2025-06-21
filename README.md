@@ -54,3 +54,10 @@ Want to contribute?
 git clone https://github.com/humayun-ashik/just-json-chrome-extension.git
 cd just-json-chrome-extension
 # make your changes
+
+
+...
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
