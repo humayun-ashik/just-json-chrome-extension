@@ -24,50 +24,68 @@ modeSelector.addEventListener("change", () => {
   }
 });
 
-prettifyBtn.addEventListener("click", () => {
-    try {
-      const parsed = JSON.parse(jsonInput.value);
-      const formatted = JSON.stringify(parsed, null, 2).split("\n");
+// prettifyBtn.addEventListener("click", () => {
+//     try {
+//       const parsed = JSON.parse(jsonInput.value);
+//       const formatted = JSON.stringify(parsed, null, 2).split("\n");
   
-      const safeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      let formattedHTML = "";
+//       const safeHTML = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+//       let formattedHTML = "";
   
-      for (let line of formatted) {
-        formattedHTML += `<div>${safeHTML(line)}</div>`;
-      }
+//       for (let line of formatted) {
+//         formattedHTML += `<div>${safeHTML(line)}</div>`;
+//       }
   
-      document.getElementById("formattedOutput").innerHTML = formattedHTML;
-      document.getElementById("formattedOutputContainer").style.display = "block";
+//       document.getElementById("formattedOutput").innerHTML = formattedHTML;
+//       document.getElementById("formattedOutputContainer").style.display = "block";
   
-    } catch (e) {
-      document.getElementById("formattedOutput").innerHTML = `<div class="diff-removed">❌ Invalid JSON</div>`;
-      document.getElementById("formattedOutputContainer").style.display = "block";
-    }
-  });
+//     } catch (e) {
+//       document.getElementById("formattedOutput").innerHTML = `<div class="diff-removed">❌ Invalid JSON</div>`;
+//       document.getElementById("formattedOutputContainer").style.display = "block";
+//     }
+//   });
 
-  document.getElementById('prettifyBtn').addEventListener('click', function () {
-    const input = document.getElementById('jsonInput').value;
-    try {
-      const formatted = JSON.stringify(JSON.parse(input), null, 2).split('\n');
+//   document.getElementById('prettifyBtn').addEventListener('click', function () {
+//     const input = document.getElementById('jsonInput').value;
+//     try {
+//       const formatted = JSON.stringify(JSON.parse(input), null, 2);
+//       document.getElementById('formattedOutput').value = formatted;
+//       document.getElementById('formattedOutputContainer').style.display = 'block';
+//       document.getElementById('copyBtn').style.display = 'inline-block';
+//       document.getElementById('downloadBtn').style.display = 'inline-block';
+//     } catch (e) {
+//       alert('Invalid JSON');
+//     }
+//   });
   
-      let outputWithLineNumbers = '';
-      formatted.forEach((line, index) => {
-        const lineNumber = String(index + 1).padStart(3, ' ');
-        outputWithLineNumbers += `<span style="color: #888;">${lineNumber} | </span>${line}<br/>`;
-      });
-  
-      const outputEl = document.getElementById('formattedOutput');
-      outputEl.innerHTML = outputWithLineNumbers;
-  
-      document.getElementById('formattedOutputContainer').style.display = 'block';
-      document.getElementById('copyBtn').style.display = 'inline-block';
-      document.getElementById('downloadBtn').style.display = 'inline-block';
-    } catch (e) {
-      alert('Invalid JSON');
-    }
-  });
-  
-  
+
+// Unified prettify function
+prettifyBtn.addEventListener("click", () => {
+  try {
+    const parsed = JSON.parse(jsonInput.value);
+    const formatted = JSON.stringify(parsed, null, 2).split("\n");
+    
+    let formattedHTML = "";
+    formatted.forEach(line => {
+      const safeLine = line.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      formattedHTML += `<div>${safeLine}</div>`;
+    });
+
+    const outputPre = document.getElementById('formattedOutput');
+    outputPre.innerHTML = formattedHTML;
+    
+    document.getElementById('formattedOutputContainer').style.display = 'block';
+    document.getElementById('copyBtn').style.display = 'inline-block';
+    document.getElementById('downloadBtn').style.display = 'inline-block';
+    
+  } catch (e) {
+    const outputPre = document.getElementById('formattedOutput');
+    outputPre.innerHTML = '<div class="diff-removed">❌ Invalid JSON</div>';
+    document.getElementById('formattedOutputContainer').style.display = 'block';
+    document.getElementById('copyBtn').style.display = 'none';
+    document.getElementById('downloadBtn').style.display = 'none';
+  }
+});
   
   
   copyBtn.addEventListener("click", () => {

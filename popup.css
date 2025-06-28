@@ -13,24 +13,33 @@
   }
   
   /* LIGHT THEME (default) */
+
   :root {
+    --success-color: #28a745;
     --bg-color: #ffffff;
     --text-color: #000000;
     --box-bg: #f9f9f9;
     --line-color: #888;
     --border-color: #ddd;
-    --highlight-diff: #fff3cd;
+    --highlight-diff: #00BFFF;  /* Changed to deeper blue for better visibility */
+    --highlight-added: #a6f3a6;
+    --highlight-removed: #ffb6b6;
+    --diff-text-color: #000000; /* Default text color for diffs */
   }
   
-  /* DARK THEME */
   body.dark-mode {
+    --success-color: #5CBF60;
     --bg-color: #121212;
     --text-color: #e0e0e0;
     --box-bg: #1e1e1e;
     --line-color: #aaa;
     --border-color: #444;
-    --highlight-diff: #3a3a1a;
+    --highlight-diff: #FFA500;  /* Orange stands out better in dark mode */
+    --highlight-added: #294436;
+    --highlight-removed: #442f2f;
+    --diff-text-color: #121212; /* Dark text for better contrast on orange */
   }
+  
   
   /* Apply theme variables */
   body {
@@ -49,6 +58,40 @@ select:focus {
   background-color: var(--box-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
+}
+
+/* JSON Pretty Formatter Styles */
+/* JSON Pretty Output Styles */
+.json-pretty {
+  font-family: monospace;
+  font-size: 13px; /* Match your original font size */
+  background-color: var(--box-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 10px 10px 10px 40px; /* Left padding for line numbers */
+  border-radius: 6px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  counter-reset: line; /* Initialize line counter */
+  position: relative;
+  margin: 0;
+}
+
+/* Line number styling */
+.json-pretty div {
+  position: relative;
+  display: block;
+  padding-left: 10px;
+}
+
+.json-pretty div::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: -30px;
+  width: 25px;
+  text-align: right;
+  color: var(--line-color);
 }
 
 button {
@@ -95,25 +138,6 @@ body {
     z-index: 100;
   }
   
-  /* Light theme (default) */
-  :root {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --box-bg: #f9f9f9;
-    --line-color: #888;
-    --border-color: #ddd;
-    --highlight-diff: #fff3cd;
-  }
-  
-  /* Dark theme */
-  body.dark-mode {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --box-bg: #1e1e1e;
-    --line-color: #aaaaaa;
-    --border-color: #333;
-    --highlight-diff: #3a3a1a;
-  }
   
   /* Apply theme variables */
   body {
@@ -136,8 +160,9 @@ body {
   }
   
   /* Diff highlights */
+
   .diff-changed {
-    background-color: var(--highlight-diff);
+    background-color: var(--highlight-diff) !important;
   }
   
 
@@ -264,16 +289,22 @@ body {
   }
   
   /* Highlights */
-  .diff-added {
-    background-color: #294436; /* greenish on dark */
-  }
-  
-  .diff-removed {
-    background-color: #442f2f; /* reddish on dark */
-  }
-  
-  .diff-changed {
-    background-color: #4d4427; /* yellowish on dark */
-  }
+ /* Highlights */
+/* Diff highlights - simplified and more specific */
+.json-diff-box .diff-changed {
+  background-color: var(--highlight-diff) !important;
+  color: var(--diff-text-color) !important;
+  padding: 2px;
+  border-radius: 2px;
+}
+
+.json-diff-box .diff-added {
+  background-color: var(--highlight-added) !important;
+}
+
+.json-diff-box .diff-removed {
+  background-color: var(--highlight-removed) !important;
+}
+
   
 
