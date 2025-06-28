@@ -44,6 +44,31 @@ prettifyBtn.addEventListener("click", () => {
       document.getElementById("formattedOutputContainer").style.display = "block";
     }
   });
+
+  document.getElementById('prettifyBtn').addEventListener('click', function () {
+    const input = document.getElementById('jsonInput').value;
+    try {
+      const formatted = JSON.stringify(JSON.parse(input), null, 2).split('\n');
+  
+      let outputWithLineNumbers = '';
+      formatted.forEach((line, index) => {
+        const lineNumber = String(index + 1).padStart(3, ' ');
+        outputWithLineNumbers += `<span style="color: #888;">${lineNumber} | </span>${line}<br/>`;
+      });
+  
+      const outputEl = document.getElementById('formattedOutput');
+      outputEl.innerHTML = outputWithLineNumbers;
+  
+      document.getElementById('formattedOutputContainer').style.display = 'block';
+      document.getElementById('copyBtn').style.display = 'inline-block';
+      document.getElementById('downloadBtn').style.display = 'inline-block';
+    } catch (e) {
+      alert('Invalid JSON');
+    }
+  });
+  
+  
+  
   
   copyBtn.addEventListener("click", () => {
     try {
