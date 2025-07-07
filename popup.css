@@ -1,55 +1,61 @@
-
-
 /* Overall container */
 
 /* Theme Toggle Button */
-#themeToggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 1000;
-  }
-  
-  /* LIGHT THEME (default) */
+#buttonWrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  z-index: 1000;
+}
 
-  :root {
-    --success-color: #28a745;
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --box-bg: #f9f9f9;
-    --line-color: #888;
-    --border-color: #ddd;
-    --highlight-diff: #00BFFF;  /* Changed to deeper blue for better visibility */
-    --highlight-added: #a6f3a6;
-    --highlight-removed: #ffb6b6;
-    --diff-text-color: #000000; /* Default text color for diffs */
-  }
-  
-  body.dark-mode {
-    --success-color: #5CBF60;
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --box-bg: #1e1e1e;
-    --line-color: #aaa;
-    --border-color: #444;
-    --highlight-diff: #FFA500;  /* Orange stands out better in dark mode */
-    --highlight-added: #294436;
-    --highlight-removed: #442f2f;
-    --diff-text-color: #121212; /* Dark text for better contrast on orange */
-  }
-  
-  
-  /* Apply theme variables */
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: sans-serif;
-    margin: 0;
-  }
-  
-  textarea,
+#themeToggle,
+#clearBtn {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* LIGHT THEME (default) */
+
+:root {
+  --success-color: #28a745;
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --box-bg: #f9f9f9;
+  --line-color: #888;
+  --border-color: #ddd;
+  --highlight-diff: #00bfff;
+  /* Changed to deeper blue for better visibility */
+  --highlight-added: #a6f3a6;
+  --highlight-removed: #ffb6b6;
+  --diff-text-color: #000000;
+  /* Default text color for diffs */
+}
+
+body.dark-mode {
+  --success-color: #5cbf60;
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --box-bg: #1e1e1e;
+  --line-color: #aaa;
+  --border-color: #444;
+  --highlight-diff: #ffa500;
+  /* Orange stands out better in dark mode */
+  --highlight-added: #294436;
+  --highlight-removed: #442f2f;
+  --diff-text-color: #121212;
+  /* Dark text for better contrast on orange */
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: sans-serif;
+  margin: 0;
+}
+
+textarea,
 select,
 pre,
 .json-diff-box,
@@ -64,15 +70,18 @@ select:focus {
 /* JSON Pretty Output Styles */
 .json-pretty {
   font-family: monospace;
-  font-size: 13px; /* Match your original font size */
+  font-size: 13px;
+  /* Match your original font size */
   background-color: var(--box-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 10px 10px 10px 40px; /* Left padding for line numbers */
+  padding: 10px 10px 10px 40px;
+  /* Left padding for line numbers */
   border-radius: 6px;
   white-space: pre-wrap;
   overflow-x: auto;
-  counter-reset: line; /* Initialize line counter */
+  counter-reset: line;
+  /* Initialize line counter */
   position: relative;
   margin: 0;
 }
@@ -101,195 +110,180 @@ button {
   cursor: pointer;
 }
 
-  
-  /* Line number color */
-  .json-diff-box div::before {
-    color: var(--line-color);
-  }
-  
+/* Line number color */
+.json-diff-box div::before {
+  color: var(--line-color);
+}
+
 body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 10px;
-    width: 780px; /* Max allowed by Chrome */
-    min-height: 600px;
-    box-sizing: border-box;
-  }
-  
-  #header {
-    margin-bottom: 15px;
-  }
-  
-  /* Dropdown */
-  #modeSelector {
-    font-size: 16px;
-    padding: 6px 12px;
-    width: 200px;
-    margin-bottom: 10px;
-  }
+  font-family: sans-serif;
+  margin: 0;
+  padding: 10px;
+  width: 780px;
+  /* Max allowed by Chrome */
+  min-height: 600px;
+  box-sizing: border-box;
+}
 
-  /* Theme toggle icon */
-#themeToggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    z-index: 100;
-  }
-  
-  
-  /* Apply theme variables */
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    font-family: sans-serif;
-  }
-  
-  textarea,
-  .json-diff-box {
-    background-color: var(--box-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-  }
-  
-  /* Update line number color */
-  .json-diff-box div::before {
-    color: var(--line-color);
-  }
-  
-  /* Diff highlights */
+#header {
+  margin-bottom: 15px;
+}
 
-  .diff-changed {
-    background-color: var(--highlight-diff) !important;
-  }
-  
+/* Dropdown */
+#modeSelector {
+  font-size: 16px;
+  padding: 6px 12px;
+  width: 200px;
+  margin-bottom: 10px;
+}
 
-  .icon-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 5px;
-    transition: transform 0.2s ease;
-  }
-  
-  .icon-btn:hover {
-    transform: scale(1.1);
-  }
-  
-  
-  /* Action buttons */
-  .action-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: bold; /* 🔥 This line makes text bold */
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .action-btn:hover {
-    background-color: #45a049;
-  }
-  body.dark-mode .action-btn {
-    background-color: #5CBF60;
-  }
-    
-  
-  .action-btn:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-  
-  
-  textarea {
-    width: 100%;
-    height: 150px;
-    font-family: monospace;
-    font-size: 13px;
-    padding: 10px;
-    box-sizing: border-box;
-    resize: vertical;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  pre {
-    background: #f1f1f1;
-    padding: 10px;
-    overflow-x: auto;
-  }
-  
-  /* Compare Layout */
-  .compare-container {
-    display: flex;
-    gap: 10px;
-    align-items: stretch;
-    margin-bottom: 10px;
-  }
-  
-  .compare-container textarea {
-    flex: 1;
-  }
-  
-  .compare-button-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+/* Apply theme variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  font-family: sans-serif;
+}
 
-  /* Scroll wrapper gets vertical scroll */
+textarea,
+.json-diff-box {
+  background-color: var(--box-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+/* Update line number color */
+.json-diff-box div::before {
+  color: var(--line-color);
+}
+
+/* Diff highlights */
+
+.diff-changed {
+  background-color: var(--highlight-diff) !important;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Action buttons */
+.action-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  /* 🔥 This line makes text bold */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: #45a049;
+}
+
+body.dark-mode .action-btn {
+  background-color: #5cbf60;
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+pre {
+  background: #f1f1f1;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+/* Compare Layout */
+.compare-container {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+
+.compare-container textarea {
+  flex: 1;
+}
+
+.compare-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Scroll wrapper gets vertical scroll */
 #scrollWrapper {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-  }
-  
-  /* Side-by-side layout */
-  #compareScrollContainer {
-    display: flex;
-    width: 100%;
-  }
-  
-  /* Each JSON box */
-  .json-diff-box {
-    background-color: var(--box-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    padding: 10px 10px 10px 40px;
-    white-space: pre-wrap;
-    font-family: monospace;
-    font-size: 13px;
-    counter-reset: line;
-    position: relative;
-  }
-  
-  
-  /* Line formatting */
-  .json-diff-box div {
-    display: block;
-    padding-left: 10px;
-    position: relative;
-  }
-  
-  .json-diff-box div::before {
-    counter-increment: line;
-    content: counter(line);
-    position: absolute;
-    left: -30px;
-    width: 25px;
-    text-align: right;
-    color: #888;
-  }
-  
-  /* Highlights */
- /* Highlights */
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+/* Side-by-side layout */
+#compareScrollContainer {
+  display: flex;
+  width: 100%;
+}
+
+/* Each JSON box */
+.json-diff-box {
+  background-color: var(--box-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 10px 10px 10px 40px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 13px;
+  counter-reset: line;
+  position: relative;
+}
+
+/* Line formatting */
+.json-diff-box div {
+  display: block;
+  padding-left: 10px;
+  position: relative;
+}
+
+.json-diff-box div::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: -30px;
+  width: 25px;
+  text-align: right;
+  color: #888;
+}
+
+/* Highlights */
+/* Highlights */
 /* Diff highlights - simplified and more specific */
 .json-diff-box .diff-changed {
   background-color: var(--highlight-diff) !important;
@@ -305,6 +299,3 @@ body {
 .json-diff-box .diff-removed {
   background-color: var(--highlight-removed) !important;
 }
-
-  
-
