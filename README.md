@@ -59,16 +59,13 @@ We don’t use cookies, analytics, or external APIs.
 
 This project is licensed under the [MIT License](LICENSE).
 
+
 ---
 
-## 🛠️ Development
+## 🙏 Special Thanks
 
-Want to contribute?
+This project is made possible by the wonderful contributions from our community.
+See our full list of [Contributors here](CONTRIBUTORS.md).
 
-```bash
-git clone https://github.com/humayun-ashik/just-json-chrome-extension.git
-cd just-json-chrome-extension
-# make your changes
-...
-
+---
 
