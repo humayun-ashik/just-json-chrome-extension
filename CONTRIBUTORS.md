@@ -19,7 +19,7 @@ We are incredibly grateful to the brilliant minds who have dedicated their time 
 
 
 <a href="https://github.com/Masum-ipv" title="Fakhrul Islam's GitHub Profile">
-  <img src="https://avatars.githubusercontent.com/u/Masum-ipv?s=100&v=4" alt="Fakhrul Islam Profile" width="80" height="80" style="border-radius: 50%; margin-right: 15px; float: left;">
+  <img src="https://avatars.githubusercontent.com/u/19203484?s=100&v=4" alt="Fakhrul Islam Profile" width="80" height="80" style="border-radius: 50%; margin-right: 15px; float: left;">
 </a>
 
 **[Fakhrul Islam](https://github.com/Masum-ipv")**
@@ -28,7 +28,7 @@ We are incredibly grateful to the brilliant minds who have dedicated their time 
 <br clear="left"/> <!-- Clear float for next entry -->
 
 <a href="https://github.com/humayun-ashik" title="Humayun Ahmed Ashik's GitHub Profile">
-  <img src="https://avatars.githubusercontent.com/u/humayun-ashik?s=100&v=4" alt="Humayun Ahmed Ashik Profile" width="80" height="80" style="border-radius: 50%; margin-right: 15px; float: left;">
+  <img src="https://avatars.githubusercontent.com/u/80956301?s=100&v=4" alt="Humayun Ahmed Ashik Profile" width="80" height="80" style="border-radius: 50%; margin-right: 15px; float: left;">
 </a>
 
 **[Humayun Ahmed Ashik](https://github.com/humayun-ashik)**
