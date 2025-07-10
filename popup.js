@@ -14,6 +14,56 @@ const compareOutput = document.getElementById("compareOutput");
 const themeToggle = document.getElementById("themeToggle");
 const clearBtn = document.getElementById("clearBtn");
 
+const uploadBtn = document.getElementById("uploadBtn");
+const jsonFileInput = document.getElementById("jsonFileInput");
+
+// === Drag & Drop on textarea ===
+jsonInput.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  jsonInput.style.borderColor = "#333";
+});
+
+jsonInput.addEventListener("dragleave", () => {
+  jsonInput.style.borderColor = "#aaa";
+});
+
+jsonInput.addEventListener("drop", (e) => {
+  e.preventDefault();
+  jsonInput.style.borderColor = "#aaa";
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith(".json")) {
+    readJsonFile(file);
+  } else {
+    alert("Please drop a valid .json file.");
+  }
+});
+
+// === Upload JSON File ===
+uploadBtn.addEventListener("click", () => {
+  console.log("Upload button clicked");
+  jsonFileInput.value = ""; // Reset the input to allow re-uploading the same file
+  jsonFileInput.click();
+});
+
+jsonFileInput.addEventListener("change", () => {
+  const file = jsonFileInput.files[0];
+  if (file && file.name.endsWith(".json")) {
+    readJsonFile(file);
+  } else {
+    alert("Please select a valid .json file.");
+  }
+});
+
+// === Read & Display File ===
+function readJsonFile(file) {
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    jsonInput.value = event.target.result;
+    prettifyBtn.click(); // Auto-prettify after file is loaded
+  };
+  reader.readAsText(file);
+}
+
 modeSelector.addEventListener("change", () => {
   if (modeSelector.value === "format") {
     jsonFormatMode.style.display = "block";

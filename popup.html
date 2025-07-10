@@ -48,38 +48,64 @@
           </div-->
 
       <div id="jsonFormatMode" class="mode">
-        <textarea id="jsonInput" placeholder="Paste JSON here..."></textarea>
+        <textarea
+          id="jsonInput"
+          placeholder="Paste JSON here or drag & drop a JSON file..."
+          style="
+            border: 2px dashed #aaa;
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+          "
+        ></textarea>
 
+        <!-- Buttons Row -->
         <div
-          style="display: flex; gap: 8px; align-items: center; margin-top: 10px"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+          "
         >
-          <button id="prettifyBtn" class="action-btn prettify-btn">
-            ✨ Prettify
-          </button>
-          <button
-            id="copyBtn"
-            class="icon-btn"
-            title="Copy to clipboard"
-            style="display: none"
-          >
-            📋
-          </button>
-          <button
-            id="downloadBtn"
-            class="icon-btn"
-            title="Download JSON"
-            style="display: none"
-          >
-            💾
-          </button>
-          <span
-            id="copyStatus"
-            style="display: none; color: var(--success-color); font-size: 13px"
-          >
-            Copied!
-          </span>
+          <!-- Left side: Action Buttons -->
+          <div style="display: flex; gap: 10px">
+            <button id="prettifyBtn" class="action-btn prettify-btn">
+              ✨ Prettify
+            </button>
+            <button
+              id="copyBtn"
+              class="icon-btn"
+              title="Copy to clipboard"
+              style="display: none"
+            >
+              📋
+            </button>
+            <button
+              id="downloadBtn"
+              class="icon-btn"
+              title="Download JSON"
+              style="display: none"
+            >
+              💾
+            </button>
+          </div>
+
+          <!-- Right side: Upload Button -->
+          <div>
+            <input
+              type="file"
+              id="jsonFileInput"
+              accept=".json,application/json"
+              style="display: none"
+            />
+            <button id="uploadBtn" class="action-btn">📁 Upload JSON</button>
+          </div>
         </div>
 
+        <!-- Formatted Output -->
         <div
           id="formattedOutputContainer"
           style="display: none; margin-top: 10px"
