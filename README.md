@@ -65,7 +65,7 @@ This project is licensed under the [MIT License](LICENSE).
 ## 🙏 Special Thanks
 
 This project is made possible by the wonderful contributions from our community.
-See our full list of [Contributors here](CONTRIBUTORS.md).
+See our full list of [Contributors here](https://humayun-ashik.github.io/just-json-chrome-extension/CONTRIBUTORS.html)
 
 ---
 

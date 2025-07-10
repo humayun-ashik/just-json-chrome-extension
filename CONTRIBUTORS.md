@@ -1,6 +1,6 @@
 # ✨ Our Amazing Contributors ✨
 
-We are incredibly grateful to the brilliant minds who have dedicated their time and expertise to making [JUST JSON](https://chromewebstore.google.com/detail/just-json) better. This project thrives because of your passion and commitment!
+We are incredibly grateful to the brilliant minds who have dedicated their time and expertise to making [Just JSON](https://chromewebstore.google.com/detail/just-json) better. This project thrives because of your passion and commitment!
 
 ---
 
@@ -22,8 +22,8 @@ We are incredibly grateful to the brilliant minds who have dedicated their time 
   <img src="https://avatars.githubusercontent.com/u/19203484?s=100&v=4" alt="Fakhrul Islam Profile" width="80" height="80" style="border-radius: 50%; margin-right: 15px; float: left;">
 </a>
 
-**[Fakhrul Islam](https://github.com/Masum-ipv")**
-* **Contribution:** For implementing the clear button feature.
+**[Masum](https://github.com/Masum-ipv")**
+* **Contribution:** For implementing the clear button feature, upload json file or drag-n-drop.
 
 <br clear="left"/> <!-- Clear float for next entry -->
 
