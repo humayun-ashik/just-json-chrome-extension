@@ -41,10 +41,9 @@ body.dark-mode {
   --border-color: #444;
   --highlight-diff: #ffa500;
   /* Orange stands out better in dark mode */
-  --highlight-added: #294436;
-  --highlight-removed: #442f2f;
-  --diff-text-color: #121212;
-  /* Dark text for better contrast on orange */
+  --highlight-added: #388E3C; /* A slightly brighter, distinct green */
+  --highlight-removed: #D32F2F; /* A slightly brighter, distinct red */
+  --diff-text-color: #e0e0e0; /* Light text for all diffs in dark mode */
 }
 
 /* Apply theme variables */
@@ -53,6 +52,10 @@ body {
   color: var(--text-color);
   font-family: sans-serif;
   margin: 0;
+  padding: 10px; /* Added padding to body for overall spacing */
+  width: 780px; /* Max allowed by Chrome */
+  min-height: 600px;
+  box-sizing: border-box;
 }
 
 textarea,
@@ -67,26 +70,23 @@ select:focus {
 }
 
 /* JSON Pretty Formatter Styles */
-/* JSON Pretty Output Styles */
 .json-pretty {
   font-family: monospace;
   font-size: 13px;
-  /* Match your original font size */
   background-color: var(--box-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 10px 10px 10px 40px;
-  /* Left padding for line numbers */
+  padding: 10px 10px 10px 40px; /* Left padding for line numbers */
   border-radius: 6px;
   white-space: pre-wrap;
   overflow-x: auto;
-  counter-reset: line;
-  /* Initialize line counter */
-  position: relative;
+  counter-reset: line; /* Initialize line counter */
+  position: relative; /* Crucial for absolute positioning of search elements */
   margin: 0;
+  min-height: 200px; /* Give it some height even if content is small */
 }
 
-/* Line number styling */
+/* Line number styling for json-pretty */
 .json-pretty div {
   position: relative;
   display: block;
@@ -100,7 +100,7 @@ select:focus {
   left: -30px;
   width: 25px;
   text-align: right;
-  color: var(--line-color);
+  color: var(--line-color); /* Use theme variable */
 }
 
 button {
@@ -110,19 +110,9 @@ button {
   cursor: pointer;
 }
 
-/* Line number color */
+/* Line number color for json-diff-box (compare mode) */
 .json-diff-box div::before {
   color: var(--line-color);
-}
-
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 10px;
-  width: 780px;
-  /* Max allowed by Chrome */
-  min-height: 600px;
-  box-sizing: border-box;
 }
 
 #header {
@@ -137,31 +127,30 @@ body {
   margin-bottom: 10px;
 }
 
-/* Apply theme variables */
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  margin: 0;
-  font-family: sans-serif;
-}
-
-textarea,
-.json-diff-box {
-  background-color: var(--box-bg);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-}
-
-/* Update line number color */
-.json-diff-box div::before {
-  color: var(--line-color);
-}
-
 /* Diff highlights */
+/* Apply padding and border-radius consistently to all diff types */
+.json-diff-box .diff-changed,
+.json-diff-box .diff-added,
+.json-diff-box .diff-removed {
+  padding: 2px;
+  border-radius: 2px;
+  /* Ensure text color is set for all diff types for consistency */
+  color: var(--diff-text-color) !important;
+}
 
-.diff-changed {
+/* Specific background colors for diff types */
+.json-diff-box .diff-changed {
   background-color: var(--highlight-diff) !important;
 }
+
+.json-diff-box .diff-added {
+  background-color: var(--highlight-added) !important;
+}
+
+.json-diff-box .diff-removed {
+  background-color: var(--highlight-removed) !important;
+}
+
 
 .icon-btn {
   background: none;
@@ -184,7 +173,6 @@ textarea,
   padding: 8px 16px;
   font-size: 14px;
   font-weight: bold;
-  /* 🔥 This line makes text bold */
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -215,11 +203,12 @@ textarea {
   border-radius: 4px;
 }
 
-pre {
+/* This rule was conflicting, removed to rely on .json-pretty */
+/* pre {
   background: #f1f1f1;
   padding: 10px;
   overflow-x: auto;
-}
+} */
 
 /* Compare Layout */
 .compare-container {
@@ -243,7 +232,8 @@ pre {
 #scrollWrapper {
   max-height: 400px;
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color); /* Use theme variable */
+  border-radius: 6px; /* Match other elements */
 }
 
 /* Side-by-side layout */
@@ -263,6 +253,7 @@ pre {
   font-size: 13px;
   counter-reset: line;
   position: relative;
+  flex: 1; /* Allow them to take equal width */
 }
 
 /* Line formatting */
@@ -279,23 +270,106 @@ pre {
   left: -30px;
   width: 25px;
   text-align: right;
-  color: #888;
+  color: var(--line-color); /* Use theme variable */
 }
 
-/* Highlights */
-/* Highlights */
-/* Diff highlights - simplified and more specific */
-.json-diff-box .diff-changed {
-  background-color: var(--highlight-diff) !important;
-  color: var(--diff-text-color) !important;
-  padding: 2px;
-  border-radius: 2px;
+
+/* --- Search Specific Styles --- */
+
+/* Search Icon Positioning (Magnifying Glass) */
+#searchBtn {
+  position: absolute;
+  top: 5px; /* Adjust as needed */
+  right: 10px; /* Aligned with search container */
+  z-index: 11; /* Ensure it's above search bar if both are active */
+  background-color: var(--box-bg); /* Match theme */
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: none; /* Initially hidden by default */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
 }
 
-.json-diff-box .diff-added {
-  background-color: var(--highlight-added) !important;
+/* Search Bar Container Positioning and Styling */
+#searchContainer {
+  /* Removed display: flex here to ensure it's hidden by default */
+  display: none; /* Hidden by default, controlled by JS */
+  position: absolute;
+  top: 10px; /* Adjust as needed, slightly below searchBtn */
+  right: 10px; /* Aligned with searchBtn */
+  background-color: var(--box-bg); /* Use theme variable */
+  padding: 5px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* More prominent shadow */
+  z-index: 10; /* Ensure it's above the pre tag */
+  align-items: center; /* Keep align-items for when it is flexed by JS */
+  gap: 5px;
+  width: 320px; /* Increased width to prevent overflow */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
-.json-diff-box .diff-removed {
-  background-color: var(--highlight-removed) !important;
+/* Search Input Field */
+#searchContainer input {
+  flex-grow: 1;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color); /* Use theme variable */
+  font-size: 13px;
+  background-color: var(--box-bg); /* Ensure it adapts to theme */
+  color: var(--text-color); /* Ensure text color adapts */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+/* Search Match Count */
+#searchMatchCount {
+  font-size: 13px;
+  color: var(--line-color); /* Use theme variable */
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Search Navigation Buttons (Up/Down/Close) */
+#searchContainer .icon-btn {
+  font-size: 18px; /* Slightly smaller than header icons */
+  padding: 3px;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+/* Search Highlights */
+.search-highlight {
+    background-color: yellow;
+    border-radius: 2px;
+    padding: 1px 2px;
+    color: black; /* Ensure text is readable on yellow */
+}
+
+.active-highlight {
+    background-color: orange;
+    outline: 1px solid red;
+    color: black; /* Ensure text is readable on orange */
+}
+
+/* Custom Message Box */
+.message-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    font-family: sans-serif;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.message-box.error {
+    background-color: #f44336; /* Red for errors */
+}
+
+.message-box.success {
+    background-color: #4CAF50; /* Green for success */
 }
