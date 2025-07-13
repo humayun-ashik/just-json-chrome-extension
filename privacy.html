@@ -1,55 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy Policy – Just JSON</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      max-width: 700px;
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      text-align: center;
-    }
-    h1 {
-      margin-bottom: 20px;
-      color: #4CAF50;
-    }
-    p {
-      margin-bottom: 15px;
-      line-height: 1.6;
-    }
-    @media (max-width: 768px) {
-      body {
-        padding: 20px;
-      }
-      .container {
-        padding: 20px;
-      }
-    }
-  </style>
+    <title>Privacy Policy - Just JSON</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8f9fa; /* Light background */
+            --text-color: #343a40; /* Darker text for readability */
+            --heading-color: #007bff; /* Primary blue for headings */
+            --border-color: #e9ecef; /* Light border */
+            --container-bg: #ffffff; /* White background for content box */
+            --shadow-color: rgba(0, 0, 0, 0.05); /* Subtle shadow */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7; /* Improved line height */
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            min-height: 100vh; /* Ensure it takes full viewport height */
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 12px var(--shadow-color); /* Soft shadow */
+            padding: 30px;
+            max-width: 700px; /* Optimal reading width */
+            width: 100%; /* Ensure it's responsive */
+            margin: 20px 0; /* Top/bottom margin, no side margin needed with justify-content center */
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--heading-color);
+            font-size: 2.2em; /* Larger heading */
+            margin-bottom: 0.8em;
+            text-align: center;
+            font-weight: 600; /* Semi-bold */
+        }
+
+        p {
+            margin-bottom: 1.2em; /* More space between paragraphs */
+            font-size: 1.05em; /* Slightly larger text */
+        }
+
+        p strong {
+            color: var(--heading-color); /* Highlight strong text */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 20px;
+                margin: 15px 0;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                border-radius: 0; /* Full width on very small screens */
+                box-shadow: none;
+                margin: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Privacy Policy</h1>
-    <p><strong>Just JSON</strong> does <u>not collect</u> or transmit any personal data.</p>
-    <p>All JSON formatting and comparison happen entirely in your browser and are not shared with any server.</p>
-    <p>We do not use analytics, cookies, or any third-party services.</p>
-    <p>This extension is designed to work completely offline and prioritizes your privacy.</p>
-    <p>By using Just JSON, you agree to these terms.</p>
-  </div>
+    <div class="container">
+        <h1>Privacy Policy - Just JSON</h1>
+        <p>Just JSON does not collect or transmit any personal data.</p>
+        <p>All JSON formatting and comparison happen entirely in your browser and are not shared with any server.</p>
+        <p>For your convenience and to provide persistence across sessions, <strong>this extension stores your last formatted JSON input and your preferred theme (light/dark mode) locally on your device using Chrome's built-in storage API.</strong> This data is only accessible by the extension itself and remains entirely within your browser.</p>
+        <p>We do not use analytics, cookies, or any third-party services.</p>
+        <p>This extension is designed to work completely offline and prioritizes your privacy.</p>
+        <p>By using Just JSON, you agree to these terms.</p>
+    </div>
 </body>
 </html>
