@@ -2,13 +2,14 @@
     "manifest_version": 3,
     "name": "Just JSON",
     "description": "A lightweight, clean, and powerful JSON viewer and formatter. Works offline and helps you prettify, copy, and compare JSON easily.",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "offline_enabled": true,
-    "permissions": [],
+    "permissions": ["storage"],
+    "background": {
+      "service_worker": "background.js"
+    },
     "action": {
       "default_popup": "popup.html",
       "default_icon": "icons/icon128.png"
-    },
-    "keywords": ["json", "json viewer", "json formatter", "json parser", "works offline", "developer tools", "chrome extension"]
-  }
-  
+    }
+}

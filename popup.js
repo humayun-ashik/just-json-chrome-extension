@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const compareBtn = document.getElementById('compareBtn');
     const compareResult = document.getElementById('compareResult');
     const outputA = document.getElementById('outputA');
-    const outputB = document.getElementById('outputB');
+    const outputB = document.getElementById('outputB'); // Corrected from document('outputB')
 
     // State variables for search
     let matches = [];
@@ -43,94 +43,138 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to apply/remove dark mode
     function applyTheme(isDarkMode) {
         document.body.classList.toggle('dark-mode', isDarkMode);
-        // Update icon based on mode
-        themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+        // Update icon based on mode: if in dark mode, show sun to suggest light; else show moon to suggest dark.
+        themeToggle.textContent = isDarkMode ? '🌞' : '🌕';
 
-        // Store preference - using chrome.storage.local for extensions, localStorage for local testing
-        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-            chrome.storage.local.set({ darkMode: isDarkMode });
+        // Store preference using chrome.storage.local via background script
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            console.log("popup.js: Sending saveTheme message to background.");
+            chrome.runtime.sendMessage({ action: "saveTheme", data: isDarkMode }, (response) => {
+                if (response && !response.success) {
+                    console.error("popup.js: Failed to save theme via background:", response.error);
+                } else {
+                    // console.log("popup.js: Theme save message sent successfully."); // Removed for cleaner console
+                }
+            });
         } else {
+            // Fallback for non-extension environments (e.g., direct HTML open)
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            // console.warn("popup.js: chrome.runtime.sendMessage not available, using localStorage for theme."); // Removed for cleaner console
         }
     }
 
+    // --- Initial Load Logic ---
     // Load theme preference on startup
-    // Check for chrome.storage.local first, then fallback to localStorage
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-        chrome.storage.local.get('darkMode', (data) => {
-            applyTheme(data.darkMode || false); // Default to light mode
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        // console.log("popup.js: Sending loadTheme message to background."); // Removed for cleaner console
+        chrome.runtime.sendMessage({ action: "loadTheme" }, (response) => {
+            if (response && response.success) {
+                applyTheme(response.data || false);
+                // console.log("popup.js: Theme loaded from background:", response.data); // Removed for cleaner console
+            } else {
+                console.error("popup.js: Failed to load theme via background:", response ? response.error : "No response");
+                // Fallback to localStorage if background script communication fails
+                const savedTheme = localStorage.getItem('theme');
+                applyTheme(savedTheme === 'dark');
+                // console.warn("popup.js: Falling back to localStorage for theme."); // Removed for cleaner console
+            }
         });
     } else {
+        // Fallback for non-extension environments
         const savedTheme = localStorage.getItem('theme');
-        applyTheme(savedTheme === 'dark'); // Default to light mode if no saved theme
+        applyTheme(savedTheme === 'dark');
+        // console.warn("popup.js: chrome.runtime.sendMessage not available, using localStorage for theme."); // Removed for cleaner console
     }
+
+    // Load saved JSON on startup
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        console.log("popup.js: Attempting to load JSON from background on DOMContentLoaded.");
+        chrome.runtime.sendMessage({ action: "loadJson" }, (response) => {
+            if (response && response.success && response.data) {
+                console.log("popup.js: Received JSON data from background. Setting input value and formatting.");
+                jsonInput.value = response.data;
+                formatJson(); // Format and display the loaded JSON
+            } else if (response && !response.success) {
+                console.error("popup.js: Failed to load JSON via background:", response.error);
+            } else {
+                console.log("popup.js: No JSON data found in storage on startup.");
+            }
+        });
+    } else {
+        // Fallback for non-extension environments
+        const lastJson = localStorage.getItem('lastJsonInput');
+        if (lastJson) {
+            jsonInput.value = lastJson;
+            formatJson(); // Format and display the loaded JSON
+            console.warn("popup.js: Using localStorage for JSON (non-extension env).");
+        } else {
+            console.log("popup.js: No localStorage JSON found (non-extension env).");
+        }
+    }
+
 
     // === Drag & Drop on textarea ===
     jsonInput.addEventListener("dragover", (e) => {
         e.preventDefault();
         jsonInput.style.borderColor = "#333";
-        console.log('Dragover event detected.');
     });
 
     jsonInput.addEventListener("dragleave", () => {
         jsonInput.style.borderColor = "#aaa";
-        console.log('Dragleave event detected.');
     });
 
     jsonInput.addEventListener("drop", (e) => {
         e.preventDefault();
         jsonInput.style.borderColor = "#aaa";
-        console.log('Drop event detected.');
         const file = e.dataTransfer.files[0];
         if (file) {
-            console.log('File dropped:', file.name, file.type);
-            if (file.name.endsWith(".json") || file.type === "application/json") {
+            if (file.type === "application/json" || file.name.endsWith(".json")) {
+                displayMessage('Processing file. Popup may close.', 'info');
                 readJsonFile(file);
             } else {
-                displayMessage('Please drop a valid .json file.', 'error');
-                console.warn('Dropped file is not a JSON file:', file.name, file.type);
+                displayMessage('Please drop a valid JSON file (.json or application/json type).', 'error');
             }
         } else {
-            console.warn('No file found in drop event.');
+            displayMessage('No file was dropped.', 'error');
         }
     });
 
     // === Upload JSON File ===
     uploadBtn.addEventListener("click", () => {
-        console.log('Upload button clicked.');
-        jsonFileInput.value = ""; // Reset the input to allow re-uploading the same file
+        jsonFileInput.value = "";
+        displayMessage('Opening file dialog. Popup may close.', 'info');
         jsonFileInput.click();
     });
 
     jsonFileInput.addEventListener("change", () => {
-        console.log('File input change event detected.');
         const file = jsonFileInput.files[0];
         if (file) {
-            console.log('File selected:', file.name, file.type);
-            if (file.name.endsWith(".json") || file.type === "application/json") {
+            if (file.type === "application/json" || file.name.endsWith(".json")) {
                 readJsonFile(file);
             } else {
-                displayMessage('Please select a valid .json file.', 'error');
-                console.warn('Selected file is not a JSON file:', file.name, file.type);
+                displayMessage('Please select a valid JSON file (.json or application/json type).', 'error');
             }
         } else {
-            console.warn('No file selected in input change event.');
+            displayMessage('No file was selected.', 'error');
         }
     });
 
     // === Read & Display File ===
     function readJsonFile(file) {
-        console.log('Attempting to read file:', file.name);
         const reader = new FileReader();
         reader.onload = (event) => {
-            console.log('File read successfully. Content length:', event.target.result.length);
-            jsonInput.value = event.target.result;
-            console.log('Calling formatJson after file read.');
-            formatJson(); // Call the unified formatJson function
+            try {
+                jsonInput.value = event.target.result;
+                formatJson();
+                displayMessage('JSON file processed successfully!', 'success');
+            } catch (e) {
+                console.error('popup.js: Error processing file content after read:', e);
+                displayMessage('Error processing file content: ' + e.message, 'error');
+            }
         };
         reader.onerror = (error) => {
-            console.error('Error reading file:', error);
-            displayMessage('Error reading file.', 'error');
+            console.error('popup.js: Error reading file:', error);
+            displayMessage('Error reading file: ' + error.message, 'error');
         };
         reader.readAsText(file);
     }
@@ -138,60 +182,88 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- JSON Formatting & Display (Unified) ---
     function formatJson() {
         const input = jsonInput.value.trim();
-        console.log('formatJson called. Input length:', input.length);
         if (!input) {
-            console.log('Input is empty, hiding output elements.');
             formattedOutputContainer.style.display = 'none';
             copyBtn.style.display = 'none';
             downloadBtn.style.display = 'none';
-            searchBtn.style.display = 'none'; // Hide search icon if no input
-            searchContainer.style.display = 'none'; // Hide search bar
-            clearSearchHighlights(); // Clear any existing highlights
+            searchBtn.style.display = 'none';
+            searchContainer.style.display = 'none';
+            clearSearchHighlights();
+            // Also clear stored JSON if input is empty
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                chrome.runtime.sendMessage({ action: "clearJson" }, (response) => {
+                    if (response && !response.success) {
+                        console.error("popup.js: Failed to clear JSON via background (input empty):", response.error);
+                    }
+                });
+            } else {
+                localStorage.removeItem('lastJsonInput');
+            }
             return;
         }
 
         try {
             const obj = JSON.parse(input);
-            console.log('JSON parsed successfully.');
             const formattedText = JSON.stringify(obj, null, 2);
-            originalFormattedLines = formattedText.split('\n'); // Store as array of lines
+            originalFormattedLines = formattedText.split('\n');
 
             let formattedHTML = "";
             originalFormattedLines.forEach((line) => {
                 const safeLine = line.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 formattedHTML += `<div>${safeLine}</div>`;
             });
-            formattedOutput.innerHTML = formattedHTML; // Set HTML with divs
+            formattedOutput.innerHTML = formattedHTML;
 
             formattedOutputContainer.style.display = 'block';
             copyBtn.style.display = 'inline-block';
             downloadBtn.style.display = 'inline-block';
-            searchBtn.style.display = 'inline-block'; // Show search icon after prettifying
+            searchBtn.style.display = 'inline-block';
+
+            // Save the valid JSON to storage via background script
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                console.log("popup.js: Sending saveJson message to background (valid input).");
+                chrome.runtime.sendMessage({ action: "saveJson", data: input }, (response) => {
+                    if (response && !response.success) {
+                        console.error("popup.js: Failed to save JSON via background (valid input):", response.error);
+                    }
+                });
+            } else {
+                localStorage.setItem('lastJsonInput', input);
+            }
 
             // If search bar was active, re-run search on new content
             if (searchContainer.style.display === 'flex') {
-                console.log('Search container was open, re-performing search.');
                 performSearch();
             }
         } catch (e) {
-            console.error('Invalid JSON:', e);
+            console.error('popup.js: Invalid JSON:', e);
+            displayMessage('Invalid JSON: ' + e.message, 'error');
             formattedOutput.innerHTML = '<div class="diff-removed">❌ Invalid JSON: ' + e.message + '</div>';
-            formattedOutputContainer.style.display = 'block';
+            
+            formattedOutputContainer.style.display = 'block'; // Still try to show error output
             copyBtn.style.display = 'none';
             downloadBtn.style.display = 'none';
-            searchBtn.style.display = 'none'; // Hide search icon on error
-            searchContainer.style.display = 'none'; // Hide search bar
-            clearSearchHighlights(); // Clear any existing highlights
+            searchBtn.style.display = 'none';
+            searchContainer.style.display = 'none';
+            clearSearchHighlights();
+            // Clear stored JSON if input is invalid
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                chrome.runtime.sendMessage({ action: "clearJson" }, (response) => {
+                    if (response && !response.success) {
+                        console.error("popup.js: Failed to clear JSON via background (input invalid):", response.error);
+                    }
+                });
+            } else {
+                localStorage.removeItem('lastJsonInput');
+            }
         }
     }
 
-    prettifyBtn.addEventListener('click', formatJson); // Use the unified formatJson
+    prettifyBtn.addEventListener('click', formatJson);
 
     // --- Search Functionality ---
 
     function clearSearchHighlights() {
-        console.log('Clearing search highlights.');
-        // Rebuild innerHTML from originalFormattedLines to remove highlights
         let formattedHTML = "";
         originalFormattedLines.forEach((line) => {
             const safeLine = line.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -206,46 +278,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function highlightMatches(searchTerm) {
         if (!searchTerm || !originalFormattedLines.length) {
-            console.log('No search term or no content to highlight.');
             return;
         }
-        console.log('Highlighting matches for term:', searchTerm);
         const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const regex = new RegExp(escapedSearchTerm, 'gi');
 
-        matches = []; // Reset matches for new search
+        matches = [];
 
         const lineDivs = formattedOutput.querySelectorAll('div');
         lineDivs.forEach((lineDiv, lineIndex) => {
-            const originalLineText = originalFormattedLines[lineIndex]; // Get original text for this line
+            const originalLineText = originalFormattedLines[lineIndex];
             let lineHtml = '';
             let lastIndex = 0;
             let match;
 
-            // Search within the original text of this line
             while ((match = regex.exec(originalLineText)) !== null) {
-                // Store match details including line index
                 matches.push({
                     lineIndex: lineIndex,
                     start: match.index,
                     end: match.index + match[0].length,
                     value: match[0],
-                    element: lineDiv // Store reference to the div element
+                    element: lineDiv
                 });
 
                 lineHtml += originalLineText.substring(lastIndex, match.index);
                 lineHtml += `<span class="search-highlight">${match[0]}</span>`;
                 lastIndex = regex.lastIndex;
             }
-            lineDiv.innerHTML = lineHtml || originalLineText.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Fallback if no match
+            lineDiv.innerHTML = lineHtml || originalLineText.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         });
-        console.log('Total matches found:', matches.length);
     }
 
     function performSearch() {
         const searchTerm = searchInput.value.trim();
-        console.log('Performing search for:', searchTerm);
-        clearSearchHighlights(); // Clear previous highlights first
+        clearSearchHighlights();
 
         if (!searchTerm || !originalFormattedLines.length) {
             searchMatchCount.textContent = '0 of 0';
@@ -253,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        highlightMatches(searchTerm); // This now updates the DOM directly
+        highlightMatches(searchTerm);
 
         if (matches.length > 0) {
             searchMatchCount.textContent = `1 of ${matches.length}`;
@@ -266,22 +332,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function scrollToMatch(index) {
-        console.log('Scrolling to match index:', index);
         if (matches.length === 0 || index < 0 || index >= matches.length) {
-            console.warn('Invalid match index or no matches to scroll to.');
             return;
         }
 
-        // Remove active class from previous highlight
         const prevActive = formattedOutput.querySelector('.active-highlight');
         if (prevActive) {
             prevActive.classList.remove('active-highlight');
         }
 
-        // Get the current match's span element
         const currentMatch = matches[index];
         if (currentMatch && currentMatch.element) {
-            // Re-apply highlight to ensure it's a span (in case it was cleared and re-highlighted)
             const lineDiv = currentMatch.element;
             const originalLineText = originalFormattedLines[currentMatch.lineIndex];
             const escapedSearchTerm = searchInput.value.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -289,24 +350,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let lineHtml = '';
             let lastIndex = 0;
-            let spanCount = 0; // To find the correct span if multiple on one line
+            let spanCount = 0;
 
             while ((match = regex.exec(originalLineText)) !== null) {
                 lineHtml += originalLineText.substring(lastIndex, match.index);
-                lineHtml += `<span class="search-highlight temp-span-${spanCount}">${match[0]}</span>`; // Use temp class
+                lineHtml += `<span class="search-highlight temp-span-${spanCount}">${match[0]}</span>`;
                 lastIndex = regex.lastIndex;
                 spanCount++;
             }
             lineDiv.innerHTML = lineHtml || originalLineText.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-            // Find the specific span that corresponds to the currentMatch
             const allSpansInLine = lineDiv.querySelectorAll('.search-highlight');
-            let currentSpanIndexInLine = 0;
-            for (let i = 0; i < index; i++) {
-                if (matches[i].lineIndex === currentMatch.lineIndex) {
-                    currentSpanIndexInLine++;
-                }
-            }
             let targetSpan = null;
             if (allSpansInLine[currentSpanIndexInLine]) {
                 targetSpan = allSpansInLine[currentSpanIndexInLine];
@@ -319,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchMatchCount.textContent = `${index + 1} of ${matches.length}`;
                 currentMatchIndex = index;
             } else {
-                console.warn("Target span for scrolling not found.");
+                // console.warn("Target span for scrolling not found.");
             }
         }
     }
@@ -328,16 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
 
     copyBtn.addEventListener("click", () => {
-        // Use document.execCommand('copy') for better compatibility in Chrome Extensions
         const textarea = document.createElement('textarea');
-        // Copy plain text content (without highlights)
         textarea.value = originalFormattedLines.join('\n');
         document.body.appendChild(textarea);
         textarea.select();
         try {
             document.execCommand('copy');
             displayMessage('Copied!', 'success');
-            console.log('Content copied to clipboard.');
         } catch (err) {
             console.error('Failed to copy text: ', err);
             displayMessage('Failed to copy!', 'error');
@@ -348,7 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     downloadBtn.addEventListener("click", () => {
         try {
-            // Download plain text content (without highlights)
             const blob = new Blob([originalFormattedLines.join('\n')], { type: "application/json" });
             const url = URL.createObjectURL(blob);
 
@@ -358,7 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
             a.click();
 
             URL.revokeObjectURL(url);
-            console.log('JSON file download initiated.');
         } catch (e) {
             console.error('Error during download:', e);
             displayMessage('Nothing to download or invalid JSON.', 'error');
@@ -366,28 +415,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     clearBtn.addEventListener("click", () => {
-        console.log('Clear button clicked.');
         jsonInput.value = '';
-        formattedOutput.innerHTML = ''; // Clear HTML content
+        formattedOutput.innerHTML = '';
         formattedOutputContainer.style.display = 'none';
         copyBtn.style.display = 'none';
         downloadBtn.style.display = 'none';
-        searchBtn.style.display = 'none'; // Hide search icon
-        searchContainer.style.display = 'none'; // Hide search bar
-        originalFormattedLines = []; // Clear original lines
-        clearSearchHighlights(); // Clear any existing highlights
+        searchBtn.style.display = 'none';
+        searchContainer.style.display = 'none';
+        originalFormattedLines = [];
+        clearSearchHighlights();
 
         jsonA.value = '';
         jsonB.value = '';
         compareResult.style.display = 'none';
-        outputA.innerHTML = ''; // Clear compare outputs
+        outputA.innerHTML = '';
         outputB.innerHTML = '';
-        console.log('All fields and outputs cleared.');
+
+        // Clear stored JSON via background script
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            chrome.runtime.sendMessage({ action: "clearJson" }, (response) => {
+                if (response && !response.success) {
+                    console.error("popup.js: Failed to clear JSON via background (clear button):", response.error);
+                }
+            });
+        } else {
+            localStorage.removeItem('lastJsonInput');
+        }
     });
 
     themeToggle.addEventListener("click", () => {
-        console.log('Theme toggle clicked.');
-        // Check for chrome.storage.local first, then fallback to localStorage
         if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
             chrome.storage.local.get('darkMode', (data) => {
                 applyTheme(!data.darkMode);
@@ -399,60 +455,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modeSelector.addEventListener("change", (event) => {
-        console.log('Mode changed to:', event.target.value);
         if (event.target.value === "format") {
             jsonFormatMode.style.display = "block";
             jsonCompareMode.style.display = "none";
-            // Ensure search elements are hidden/shown based on format mode state
             if (formattedOutputContainer.style.display === 'block') {
                 searchBtn.style.display = 'inline-block';
             } else {
                 searchBtn.style.display = 'none';
             }
-            searchContainer.style.display = 'none'; // Hide search bar when switching away and back
-            clearSearchHighlights(); // Clear highlights when switching modes
+            searchContainer.style.display = 'none';
+            clearSearchHighlights();
         } else {
             jsonFormatMode.style.display = "none";
             jsonCompareMode.style.display = "block";
-            searchBtn.style.display = 'none'; // Hide search icon in compare mode
-            searchContainer.style.display = 'none'; // Hide search bar in compare mode
-            clearSearchHighlights(); // Clear highlights when switching modes
+            searchBtn.style.display = 'none';
+            searchContainer.style.display = 'none';
+            clearSearchHighlights();
         }
     });
 
     // Search event listeners
     searchBtn.addEventListener('click', () => {
-        console.log('Search icon clicked.');
-        // Toggle visibility of the search bar
         const isSearchVisible = searchContainer.style.display === 'flex';
         searchContainer.style.display = isSearchVisible ? 'none' : 'flex';
-        searchBtn.style.display = isSearchVisible ? 'inline-block' : 'none'; // Toggle search icon visibility
-        if (!isSearchVisible) { // If search bar is now visible
+        searchBtn.style.display = isSearchVisible ? 'inline-block' : 'none';
+        if (!isSearchVisible) {
             searchInput.focus();
-            performSearch(); // Perform search immediately when opened
+            performSearch();
         } else {
-            clearSearchHighlights(); // Clear highlights when search bar is closed
+            clearSearchHighlights();
         }
     });
 
     closeSearchBtn.addEventListener('click', () => {
-        console.log('Close search button clicked.');
         searchContainer.style.display = 'none';
-        searchBtn.style.display = 'inline-block'; // Show search icon when closing
+        searchBtn.style.display = 'inline-block';
         clearSearchHighlights();
     });
 
-    searchInput.addEventListener('input', performSearch); // Live search as user types
+    searchInput.addEventListener('input', performSearch);
 
     nextMatchBtn.addEventListener('click', () => {
-        console.log('Next match button clicked.');
         if (matches.length === 0) return;
         currentMatchIndex = (currentMatchIndex + 1) % matches.length;
         scrollToMatch(currentMatchIndex);
     });
 
     prevMatchBtn.addEventListener('click', () => {
-        console.log('Previous match button clicked.');
         if (matches.length === 0) return;
         currentMatchIndex = (currentMatchIndex - 1 + matches.length) % matches.length;
         scrollToMatch(currentMatchIndex);
@@ -461,45 +510,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- JSON Compare Functionality (Existing, slightly adapted) ---
 
     compareBtn.addEventListener("click", () => {
-        console.log('Compare button clicked.');
         const jsonAValue = jsonA.value.trim();
         const jsonBValue = jsonB.value.trim();
 
         if (!jsonAValue || !jsonBValue) {
-            console.warn('One or both JSON inputs for compare are empty.');
             compareResult.style.display = 'none';
             outputA.innerHTML = '<div class="diff-removed">Please paste both JSONs.</div>';
-            outputB.innerHTML = ''; // Ensure B is also cleared
+            outputB.innerHTML = '';
+            displayMessage('Please paste both JSONs for comparison.', 'error');
             return;
         }
 
         try {
             const objA = JSON.parse(jsonAValue);
             const objB = JSON.parse(jsonBValue);
-            console.log('JSONs parsed for comparison.');
 
             const diff = getJsonDiff(objA, objB);
 
-            // Ensure compare outputs also use div-per-line structure for line numbers
             outputA.innerHTML = formatDiff(objA, diff.removed, 'removed');
             outputB.innerHTML = formatDiff(objB, diff.added, 'added');
 
-            document.getElementById("compareResult").style.display = "flex"; // Use flex for side-by-side
-            console.log('Comparison results displayed.');
+            document.getElementById("compareResult").style.display = "flex";
         } catch (e) {
             console.error('Error during JSON comparison:', e);
+            displayMessage('Invalid JSON in A or B: ' + e.message, 'error');
             document.getElementById("compareResult").style.display = "block";
             outputA.innerHTML = `<div class="diff-removed">❌ Invalid JSON A: ${e.message}</div>`;
             outputB.innerHTML = `<div class="diff-removed">❌ Invalid JSON B: ${e.message}</div>`;
         }
     });
 
-    // Simple diffing logic (can be replaced with a more robust library)
     function getJsonDiff(obj1, obj2) {
         const removed = {};
         const added = {};
 
-        // Check for removed/changed in obj1
         for (const key in obj1) {
             if (!obj2.hasOwnProperty(key)) {
                 removed[key] = obj1[key];
@@ -508,7 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Check for added/changed in obj2
         for (const key in obj2) {
             if (!obj1.hasOwnProperty(key)) {
                 added[key] = obj2[key];
@@ -525,14 +568,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let htmlOutput = '';
 
         lines.forEach(line => {
-            let lineHtml = line.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Start with safe HTML
+            let lineHtml = line.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             let lineClass = '';
 
-            // Check if this line contains any key or value from the diffObj
             let isDiffLine = false;
             for (const key in diffObj) {
-                const value = JSON.stringify(diffObj[key]); // Stringified value
-                // Check for key or value (both quoted and unquoted for strings)
+                const value = JSON.stringify(diffObj[key]);
                 if (line.includes(`"${key}"`) || line.includes(value) || line.includes(String(diffObj[key]))) {
                     isDiffLine = true;
                     break;
@@ -540,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (isDiffLine) {
-                lineClass = `diff-${type}`; // Use the class directly from type (e.g., 'diff-removed', 'diff-added')
+                lineClass = `diff-${type}`;
             }
 
             htmlOutput += `<div class="${lineClass}">${lineHtml}</div>`;
@@ -548,7 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return htmlOutput;
     }
 
-    // Custom message box function (replaces alert())
     function displayMessage(message, type = 'info') {
         const messageBox = document.createElement('div');
         messageBox.textContent = message;
@@ -569,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             messageBox.style.opacity = '1';
-        }, 10); // Small delay to trigger transition
+        }, 10);
 
         setTimeout(() => {
             messageBox.style.opacity = '0';
