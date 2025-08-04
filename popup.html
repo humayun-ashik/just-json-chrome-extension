@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
   <head>
     <meta charset="UTF-8" />
     <title>JSON Formatter</title>
     <link rel="stylesheet" href="popup.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/editor/editor.main.min.css"
+    />
   </head>
 
   <body>
@@ -82,7 +86,7 @@
         <!-- Formatted Output Container -->
         <div
           id="formattedOutputContainer"
-          style="display: none; margin-top: 10px; position: relative;"
+          style="display: none; margin-top: 10px; position: relative; height: 320px"
         >
           <!-- Search Icon (positioned absolutely within this container) -->
           <div id="searchBtn" class="icon-btn" title="Search JSON">🔍</div>
@@ -125,6 +129,7 @@
         </div>
       </div>
     </div>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/monaco-editor-esm@0.17.0/+esm"></script>
     <script src="popup.js"></script>
   </body>
 </html>
