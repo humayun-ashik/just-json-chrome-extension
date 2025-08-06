@@ -61,6 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
             // console.warn("popup.js: chrome.runtime.sendMessage not available, using localStorage for theme."); // Removed for cleaner console
         }
+
+        // Update Monaco Editor theme if it's initialized
+        if (typeof monaco !== 'undefined' && monaco.editor) {
+            monaco.editor.setTheme(isDarkMode ? "vs-dark" : "vs-light");
+        }
     }
 
     // --- Initial Load Logic ---
@@ -207,17 +212,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const formattedText = JSON.stringify(obj, null, 2);
             originalFormattedLines = formattedText.split('\n');
 
-            let formattedHTML = "";
-            originalFormattedLines.forEach((line) => {
-                const safeLine = line.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                formattedHTML += `<div>${safeLine}</div>`;
-            });
-            formattedOutput.innerHTML = formattedHTML;
-
             formattedOutputContainer.style.display = 'block';
             copyBtn.style.display = 'inline-block';
             downloadBtn.style.display = 'inline-block';
-            searchBtn.style.display = 'inline-block';
+
+            // Monaco Editor dark mode support
+            const isDarkMode = document.body.classList.contains('dark-mode');
+
+            // if editor was loaded, update content
+            if (typeof monaco !== 'undefined' && monaco.editor) {
+                const editor = monaco.editor.getModels()[0];
+                if (editor) {
+                    editor.setValue(formattedText);
+                    editor.updateOptions({ theme: isDarkMode ? "vs-dark" : "vs-light" });
+                } else {
+                    monaco.editor.create(formattedOutputContainer, {
+                        value: formattedText,
+                        language: "json",
+                        automaticLayout: true,
+                        theme: isDarkMode ? "vs-dark" : "vs-light"
+                    });
+                }
+            }
 
             // Save the valid JSON to storage via background script
             if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
@@ -231,10 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('lastJsonInput', input);
             }
 
-            // If search bar was active, re-run search on new content
-            if (searchContainer.style.display === 'flex') {
-                performSearch();
-            }
         } catch (e) {
             console.error('popup.js: Invalid JSON:', e);
             displayMessage('Invalid JSON: ' + e.message, 'error');

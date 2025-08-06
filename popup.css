@@ -373,3 +373,8 @@ textarea {
 .message-box.success {
     background-color: #4CAF50; /* Green for success */
 }
+
+/* monaco editor styles */
+.editor-widget.suggest-widget {
+    display: none !important;
+}
